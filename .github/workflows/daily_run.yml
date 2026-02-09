@@ -1,0 +1,31 @@
+name: Daily NBA Value Betting Report
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Run daily at 09:00 UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  run_bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run NBA value betting bot
+      env:
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        NBA_API_KEY: ${{ secrets.NBA_API_KEY }}
+      run: python bot.py
